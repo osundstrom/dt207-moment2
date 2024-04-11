@@ -210,11 +210,54 @@ app.post("/api/workexperience", (request, response) => {
     })
 
 
+//----------------------------PUT-----------------------------------//
 
+app.put("/api/workexperience:id", (request, response) => {
+    let idData = request.params.id;
+    console.log(idData)
+    let companynameData = request.body.companyname;
+    let jobtitleData = request.body.jobtitle;
+    let locationData = request.body.location;
+    let startdateData = request.body.startdate;
+    let enddateData = request.body.enddate;
 
+        //om någon är tom /ej ifylld
+    if (!companynameData || !jobtitleData || !locationData || !startdateData || !enddateData) {
+        response.status(400).json({message: "You have to fill in all fields"});
+        return;
+    }
 
+    //Uppdatera tabell
+    connection.query("UPDATE workexperience SET companyname = ?, jobtitle = ?, location = ?, startdate = ?, enddate = ? WHERE id = ?",
+    [companynameData, jobtitleData, locationData, startdateData, enddateData, idData],
+    (err, results) => {
+        if (err) {
+            console.log("Failed update: ", err);
+            return;
+        }
 
+            console.log(results);
+            response.json({message: "workexperience updated"})
 
+    })
+
+})
+
+//-------------------------DELETE--------------------------------------//
+
+app.delete("/api/workexperience:id", (request, response) => {
+    let idData = request.params.id;
+
+    connection.query("DELETE FROM workexperience WHERE id = ?", 
+    [idData], (err, results) => {
+        if(err) {
+            response.status(400).json({message: "failed delete: ", err});
+            return;
+        }
+        console.log(results);
+        response.json({message: "workexperience deleted"})
+    }) 
+})
 
 
 //---------------------------------------------------------------//
