@@ -1,29 +1,13 @@
 
-
-const express = require("express");
-
-const cors = require("cors");
-
-
-
-const bodyParser = require("body-parser");
-
-const app = express();
+//Importerar express,cors, kunna förstå json samt skapa express app.
+const express = require("express"); 
+const cors = require("cors"); 
+const app = express(); 
 const port = 3000;
-
-app.use(express.json());
-app.use(bodyParser.json());
-
-const mysql = require("mysql");
-
-
-app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({extended: true}));
-
-//app.set("view engine", "ejs"); //View engine ejs (html typ)
-//app.use(express.static("public")); //Statiska filer (css typ)
-
+app.use(express.json()); 
+const mysql = require("mysql"); 
 app.use(cors());
+
 //---------------------------------------------------------------//
 //---------------------------------------------------------------//
 //---------------------------------------------------------------//
@@ -62,7 +46,7 @@ connection.query("DROP TABLE IF EXISTS workexperience;", (err) => {
 
 //Skapa table workexperience
 connection.query(`CREATE TABLE workexperience (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    id INTEGER AUTO_INCREMENT PRIMARY KEY, 
     companyname VARCHAR(200),
     jobtitle  VARCHAR(200),
     location  VARCHAR(200),
@@ -76,47 +60,47 @@ connection.query(`CREATE TABLE workexperience (
 
 
      //Insert till tabellen
-    connection.query("INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", 
+    connection.query("INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", //SQL
     ["Elgiganten", "Lagermedarbetare", "Sundsvall", "2019-02-01", "2022-03-01"], (err, results) => {
     if (err) {
         console.error("Failed insert " + err);
         return;
     }
-    console.table( results );
+    console.log("table added id:1");
         });
     
 
      //Insert till tabellen
-     connection.query("INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", 
+     connection.query("INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", //SQL
      ["Siba", "Kassamedarbetare", "Stockholm", "2017-01-01", "2019-01-01"], (err, results) => {
      if (err) {
          console.error("Failed insert " + err);
          return;
      }
-     console.table( results );
+     console.log("table added id:2");
          });
 
 
      //Insert till tabellen
-     connection.query("INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", 
+     connection.query("INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", //SQL
      ["Power", "Säljare", "Oslo", "2015-02-01", "2016-11-01"], (err, results) => {
      if (err) {
          console.error("Failed insert " + err);
          return;
      }
-     console.table( results );
+     console.log("table added id:3");
          });
 
 
 
      //Insert till tabellen
-     connection.query("INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", 
+     connection.query("INSERT INTO workexperience(companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", //SQL
      ["Telia", "Servicemedarbetare", "Sundsvall", "2014-02-01", "2015-03-01"], (err, results) => {
      if (err) {
          console.error("Failed insert " + err);
          return;
      }
-     console.table( results );
+     console.log("table added id:4");
          });
 
 
@@ -128,28 +112,28 @@ connection.query(`CREATE TABLE workexperience (
 
 //---------------------GET------------------------------------------//
 
-//Meddelnade vid API startsida
+//Meddelnade vid API startsida, alltså bara /API
 app.get("/api", (request, response) => {
-    response.json({message: "Välkommen till min API"});
+    response.json({message: "Välkommen till min API"}); 
 });
 
 
-//Hämtar allt
+//Hämtar allt (allt i workexperience)
 app.get("/api/workexperience", (request, response) => {
     connection.query("SELECT * FROM workexperience", (err, results) => {
         if (err) {
-            console.log("Error to get api: " + err)
+            console.log(err); //Om error
             return;
         }
         
         //Datum ska ej ha tidstämpel, blev ex "T23:00:00.000Z" efter varje datum
-        results.forEach(result => {
-            result.startdate = new Date(result.startdate).toLocaleDateString();//Formatterar
-            result.enddate = new Date(result.enddate).toLocaleDateString(); //formatterar
+        results.forEach(result => { //kollar varje
+            result.startdate = new Date(result.startdate).toLocaleDateString();//Formatterar datum för start
+            result.enddate = new Date(result.enddate).toLocaleDateString(); //formatterar datum för slut
         });
 
-        if (results.length === 0) {
-            response.status(404).json({message: "No tables found"});
+        if (results.length === 0) { //om det finnns 0 results
+            response.status(404).json({message: "No tables found"});//Skreivs detta ut
         }
         else {response.json(results);} //Returnerar reusltaten (allt i workexperience)
     
@@ -157,9 +141,9 @@ app.get("/api/workexperience", (request, response) => {
 
 //Hämtar alla companynames
 app.get("/api/companyname", (request, response) => {
-    connection.query("SELECT companyname FROM workexperience", (err, results) => {
-        if (err) {
-            console.log("Error to get api: " + err)
+    connection.query("SELECT companyname FROM workexperience", (err, results) => { //SQL
+        if (err) { //om error
+            console.log(err);
             return;
         }
 
@@ -167,8 +151,8 @@ app.get("/api/companyname", (request, response) => {
         const companyNames = results.map(result => result.companyname);
 
         // Returnera arrayen som json
-        if (companyNames.length === 0) {
-            response.status(404).json({message: "No companynames found"});
+        if (companyNames.length === 0) { //Om det inte finns något i companynames
+            response.status(404).json({message: "No companynames found"}); //skrivs denna ut
         }
         else {response.json(companyNames);}
         
@@ -180,8 +164,10 @@ app.get("/api/companyname", (request, response) => {
 
 //-------------------------POST--------------------------------------//
 
+//Skapar en POST
 app.post("/api/workexperience", (request, response) => {
 
+        //Hämtar all info via request.body o döper dem
         let companynameData = request.body.companyname;
         let jobtitleData = request.body.jobtitle;
         let locationData = request.body.location;
@@ -190,12 +176,12 @@ app.post("/api/workexperience", (request, response) => {
 
         //Inget får vara tomt. 
         if (!companynameData || !jobtitleData || !locationData || !startdateData || !enddateData) {
-            response.status(400).json({ error: "You have to fill in all fields" });
+            response.status(400).json({ error: "You have to fill in all fields" }); //Om tomt
             return;
         }
 
-        //Lägga till
-        connection.query("INSERT INTO workexperience (companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)",
+        //Lägga till ny i workexperience
+        connection.query("INSERT INTO workexperience (companyname, jobtitle, location, startdate, enddate) VALUES (?, ?, ?, ?, ?)", //SQL
             [companynameData, jobtitleData, locationData, startdateData, enddateData],
             (err, results) => {
                 if (err) {
@@ -204,7 +190,7 @@ app.post("/api/workexperience", (request, response) => {
                     return;
                 }
 
-                response.json({results});
+                response.json({results});//Skickar tillbaka resultat
             }
         );
     })
@@ -212,9 +198,13 @@ app.post("/api/workexperience", (request, response) => {
 
 //----------------------------PUT-----------------------------------//
 
-app.put("/api/workexperience:id", (request, response) => {
-    let idData = request.params.id;
-    console.log(idData)
+
+//skapar en PUT
+app.put("/api/workexperience:id", (request, response) => { 
+    let idData = request.params.id; //Parametern id, från url
+    //console.log(idData)
+
+    //Hämtar all info via request.body o döper dem
     let companynameData = request.body.companyname;
     let jobtitleData = request.body.jobtitle;
     let locationData = request.body.location;
@@ -223,12 +213,12 @@ app.put("/api/workexperience:id", (request, response) => {
 
         //om någon är tom /ej ifylld
     if (!companynameData || !jobtitleData || !locationData || !startdateData || !enddateData) {
-        response.status(400).json({message: "You have to fill in all fields"});
+        response.status(400).json({message: "You have to fill in all fields"}); //Skickar detta om if stämmer
         return;
     }
 
     //Uppdatera tabell
-    connection.query("UPDATE workexperience SET companyname = ?, jobtitle = ?, location = ?, startdate = ?, enddate = ? WHERE id = ?",
+    connection.query("UPDATE workexperience SET companyname = ?, jobtitle = ?, location = ?, startdate = ?, enddate = ? WHERE id = ?", //SQL
     [companynameData, jobtitleData, locationData, startdateData, enddateData, idData],
     (err, results) => {
         if (err) {
@@ -237,7 +227,7 @@ app.put("/api/workexperience:id", (request, response) => {
         }
 
             console.log(results);
-            response.json({message: "workexperience updated"})
+            response.json({message: "workexperience updated"}) //Skickar detta om tabellen uppdateras
 
     })
 
@@ -245,17 +235,18 @@ app.put("/api/workexperience:id", (request, response) => {
 
 //-------------------------DELETE--------------------------------------//
 
+//Skapar DELETE
 app.delete("/api/workexperience:id", (request, response) => {
-    let idData = request.params.id;
+    let idData = request.params.id; //id från url
 
-    connection.query("DELETE FROM workexperience WHERE id = ?", 
+    connection.query("DELETE FROM workexperience WHERE id = ?", //SQL
     [idData], (err, results) => {
         if(err) {
-            response.status(400).json({message: "failed delete: ", err});
+            response.status(400).json({message: "failed delete: ", err}); //Om error
             return;
         }
         console.log(results);
-        response.json({message: "workexperience deleted"})
+        response.json({message: "workexperience deleted"}) //om den raderas
     }) 
 })
 
