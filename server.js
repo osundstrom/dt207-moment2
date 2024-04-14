@@ -1,12 +1,13 @@
 
 //Importerar express,cors, kunna förstå json samt skapa express app.
+//COrs
 const express = require("express"); 
-const cors = require("cors"); 
+const cors = require("cors"); //CORS (cross orgin resource sharing) så vi kan hämta informationen från webbsidan.
 const app = express(); 
-const port = 3000;
+const port = 3000; //Port
 app.use(express.json()); 
-const mysql = require("mysql"); 
-app.use(cors());
+const mysql = require("mysql");  //mysql
+app.use(cors()); 
 
 //---------------------------------------------------------------//
 //---------------------------------------------------------------//
@@ -44,16 +45,16 @@ connection.query("DROP TABLE IF EXISTS workexperience;", (err) => {
 
 
 
-//Skapa table workexperience
+//Skapa table workexperience med auto increment på id
 connection.query(`CREATE TABLE workexperience (
-    id INTEGER AUTO_INCREMENT PRIMARY KEY, 
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
     companyname VARCHAR(200),
     jobtitle  VARCHAR(200),
     location  VARCHAR(200),
     startdate DATE, 
     enddate DATE )` , 
-    (err, table) => {
-        if(err) throw err;
+    (err, table) => { 
+        if(err) throw err; 
 
         console.log("Table created " + table);
     });
