@@ -191,7 +191,7 @@ app.post("/api/workexperience", (request, response) => {
                     return;
                 }
 
-                response.json({results});//Skickar tillbaka resultat
+                response.json({message: "workexperience added"}); //Uppdaterat så ej results skickas tilbaka utan ett meddelande.
             }
         );
     })
